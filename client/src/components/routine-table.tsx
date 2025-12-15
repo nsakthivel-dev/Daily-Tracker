@@ -152,7 +152,7 @@ export function RoutineTable({ week, onCellClick, onRoutineNameChange }: Routine
                   )}
                 </td>
                 {DAYS_OF_WEEK.map(day => {
-                  const cell = routine.cells[day];
+                  const cell = routine.cells[day] || { state: "empty" as CellState };
                   return (
                     <td 
                       key={day} 

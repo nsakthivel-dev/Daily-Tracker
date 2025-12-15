@@ -170,7 +170,7 @@ export function getAllWeekSummaries(state: AppState): WeekSummary[] {
     for (const routine of week.routines) {
       for (const day of DAYS_OF_WEEK) {
         const cell = routine.cells[day];
-        if (cell.state !== "empty") {
+        if (cell && cell.state !== "empty") {
           totalPossible++;
           if (cell.state === "completed") {
             totalCompleted++;
@@ -239,7 +239,7 @@ export function calculatePerformanceStats(state: AppState): PerformanceStats {
     for (const day of DAYS_OF_WEEK) {
       for (const routine of week.routines) {
         const cell = routine.cells[day];
-        if (cell.state !== "empty") {
+        if (cell && cell.state !== "empty") {
           dayTotals[day].total++;
           if (cell.state === "completed") {
             dayTotals[day].completed++;

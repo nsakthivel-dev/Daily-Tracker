@@ -137,7 +137,7 @@ export function calculateWeekConsistency(week: WeekData): number {
   for (const routine of week.routines) {
     for (const day of DAYS_OF_WEEK) {
       const cell = routine.cells[day];
-      if (cell.state !== "empty") {
+      if (cell && cell.state !== "empty") {
         total++;
         if (cell.state === "completed") {
           completed++;
@@ -151,9 +151,9 @@ export function calculateWeekConsistency(week: WeekData): number {
 }
 
 export function getDayCompletionCount(week: WeekData, day: DayOfWeek): number {
-  return week.routines.filter(r => r.cells[day].state === "completed").length;
+  return week.routines.filter(r => r.cells[day]?.state === "completed").length;
 }
 
 export function getDayTotalCount(week: WeekData, day: DayOfWeek): number {
-  return week.routines.filter(r => r.cells[day].state !== "empty").length;
+  return week.routines.filter(r => r.cells[day]?.state !== "empty").length;
 }
