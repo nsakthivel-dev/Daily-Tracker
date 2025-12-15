@@ -9,6 +9,17 @@ import {
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+  Area,
+  AreaChart,
+} from "recharts";
 
 interface ConsistencyChartProps {
   week: WeekData;
@@ -16,42 +27,30 @@ interface ConsistencyChartProps {
 }
 
 const SHORT_DAYS: Record<DayOfWeek, string> = {
-  Monday: "M",
-  Tuesday: "T",
-  Wednesday: "W",
-  Thursday: "T",
-  Friday: "F",
-  Saturday: "S",
-  Sunday: "S",
+  Monday: "Mon",
+  Tuesday: "Tue",
+  Wednesday: "Wed",
+  Thursday: "Thu",
+  Friday: "Fri",
+  Saturday: "Sat",
+  Sunday: "Sun",
 };
-
-function getCompletionColor(percentage: number): string {
-  if (percentage >= 80) return "bg-primary";
-  if (percentage >= 60) return "bg-chart-1/70";
-  if (percentage >= 40) return "bg-chart-3";
-  if (percentage >= 20) return "bg-chart-3/60";
-  return "bg-muted";
-}
-
-function getCompletionLabel(percentage: number): string {
-  if (percentage >= 80) return "Excellent";
-  if (percentage >= 60) return "Good";
-  if (percentage >= 40) return "Fair";
-  if (percentage >= 20) return "Low";
-  return "None";
-}
 
 export function ConsistencyChart({ week, previousWeekConsistency }: ConsistencyChartProps) {
   const totalRoutines = week.routines.length;
   const weekConsistency = calculateWeekConsistency(week);
   
-  const dailyData = DAYS_OF_WEEK.map(day => {
+  const chartData = DAYS_OF_WEEK.map(day => {
     const completed = getDayCompletionCount(week, day);
     const percentage = totalRoutines > 0 ? Math.round((completed / totalRoutines) * 100) : 0;
-    return { day, completed, percentage };
+    return { 
+      day: SHORT_DAYS[day], 
+      fullDay: day,
+      completed, 
+      percentage,
+      total: totalRoutines
+    };
   });
-  
-  const maxHeight = 120;
   
   let trend: "up" | "down" | "stable" = "stable";
   if (previousWeekConsistency !== undefined) {
@@ -76,58 +75,90 @@ export function ConsistencyChart({ week, previousWeekConsistency }: ConsistencyC
         </CardTitle>
       </CardHeader>
       <CardContent className="pt-4">
-        <div className="flex items-end justify-between gap-2" style={{ height: maxHeight + 40 }}>
-          {dailyData.map(({ day, completed, percentage }) => (
-            <div 
-              key={day} 
-              className="flex flex-col items-center gap-2 flex-1"
-              data-testid={`chart-bar-${day.toLowerCase()}`}
+        <div className="h-[180px] w-full" data-testid="consistency-line-chart">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart
+              data={chartData}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
             >
-              <div 
-                className="relative w-full flex flex-col items-center justify-end"
-                style={{ height: maxHeight }}
-              >
-                <div
-                  className={cn(
-                    "w-full max-w-[32px] rounded-t-md transition-all duration-300",
-                    getCompletionColor(percentage),
-                    percentage === 0 && "min-h-[4px]"
-                  )}
-                  style={{ 
-                    height: percentage > 0 ? `${(percentage / 100) * maxHeight}px` : 4 
-                  }}
-                  title={`${day}: ${completed}/${totalRoutines} (${percentage}%)`}
-                />
-              </div>
-              <div className="flex flex-col items-center gap-0.5">
-                <span className="text-xs font-medium text-muted-foreground">
-                  {SHORT_DAYS[day]}
-                </span>
-                <span className="font-mono text-xs text-foreground">
-                  {completed}
-                </span>
-              </div>
-            </div>
-          ))}
+              <defs>
+                <linearGradient id="colorPercentage" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid 
+                strokeDasharray="3 3" 
+                vertical={false}
+                stroke="hsl(var(--border))"
+              />
+              <XAxis 
+                dataKey="day" 
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
+                dy={10}
+              />
+              <YAxis 
+                domain={[0, 100]}
+                axisLine={false}
+                tickLine={false}
+                tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                tickFormatter={(value) => `${value}%`}
+                width={45}
+              />
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    return (
+                      <div className="bg-popover border border-popover-border rounded-md p-2 shadow-md">
+                        <p className="text-sm font-medium">{data.fullDay}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {data.completed}/{data.total} completed
+                        </p>
+                        <p className={cn(
+                          "text-sm font-mono font-semibold",
+                          data.percentage >= 70 ? "text-primary" :
+                          data.percentage >= 40 ? "text-chart-3" :
+                          "text-muted-foreground"
+                        )}>
+                          {data.percentage}%
+                        </p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Area
+                type="monotone"
+                dataKey="percentage"
+                stroke="hsl(var(--primary))"
+                strokeWidth={2.5}
+                fill="url(#colorPercentage)"
+                dot={{
+                  r: 4,
+                  fill: 'hsl(var(--primary))',
+                  strokeWidth: 2,
+                  stroke: 'hsl(var(--background))'
+                }}
+                activeDot={{
+                  r: 6,
+                  fill: 'hsl(var(--primary))',
+                  strokeWidth: 2,
+                  stroke: 'hsl(var(--background))'
+                }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
         
-        <div className="mt-6 pt-4 border-t border-border">
-          <div className="flex flex-wrap gap-3 text-xs">
-            {[80, 60, 40, 20, 0].map(threshold => (
-              <div key={threshold} className="flex items-center gap-1.5">
-                <div className={cn(
-                  "w-3 h-3 rounded-sm",
-                  getCompletionColor(threshold)
-                )} />
-                <span className="text-muted-foreground">
-                  {getCompletionLabel(threshold)}
-                </span>
-              </div>
-            ))}
+        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-0.5 bg-primary rounded-full" />
+            <span className="text-xs text-muted-foreground">Daily completion rate</span>
           </div>
-        </div>
-        
-        <div className="mt-4 text-center">
           <p className="text-xs text-muted-foreground">
             {getWeekLabel(week.weekStart, week.weekEnd)}
           </p>
