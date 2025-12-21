@@ -2,41 +2,45 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+@import './styles/game-theme.css';
+
 /* LIGHT MODE */
 :root {
-  --button-outline: rgba(0,0,0, .10);
-  --badge-outline: rgba(0,0,0, .05);
+  --button-outline: rgba(0,0,0, .15);
+  --badge-outline: rgba(0,0,0, .08);
   --opaque-button-border-intensity: -8;
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
+  --elevate-1: rgba(0,0,0, .06);
+  --elevate-2: rgba(0,0,0, .12);
   --background: 0 0% 100%;
-  --foreground: 0 0% 9%;
-  --border: 0 0% 91%;
+  --foreground: 0 0% 5%;
+  --border: 0 0% 88%;
   --card: 0 0% 98%;
-  --card-foreground: 0 0% 9%;
-  --card-border: 0 0% 94%;
+  --card-foreground: 0 0% 5%;
+  --card-border: 0 0% 90%;
   --sidebar: 0 0% 96%;
-  --sidebar-foreground: 0 0% 9%;
-  --sidebar-border: 0 0% 92%;
+  --sidebar-foreground: 0 0% 5%;
+  --sidebar-border: 0 0% 88%;
   --sidebar-primary: 142 76% 36%;
   --sidebar-primary-foreground: 144 80% 98%;
-  --sidebar-accent: 0 0% 92%;
-  --sidebar-accent-foreground: 0 0% 9%;
+  --sidebar-accent: 0 0% 88%;
+  --sidebar-accent-foreground: 0 0% 5%;
   --sidebar-ring: 142 76% 36%;
   --popover: 0 0% 94%;
-  --popover-foreground: 0 0% 9%;
-  --popover-border: 0 0% 90%;
+  --popover-foreground: 0 0% 5%;
+  --popover-border: 0 0% 86%;
   --primary: 142 76% 36%;
   --primary-foreground: 144 80% 98%;
-  --secondary: 0 0% 90%;
-  --secondary-foreground: 0 0% 9%;
-  --muted: 0 0% 92%;
-  --muted-foreground: 0 0% 45%;
-  --accent: 142 12% 88%;
-  --accent-foreground: 142 8% 15%;
-  --destructive: 0 84% 45%;
+  --secondary: 0 0% 86%;
+  --secondary-foreground: 0 0% 5%;
+  --muted: 0 0% 90%;
+  --muted-foreground: 0 0% 38%;
+  --accent: 142 12% 85%;
+  --accent-foreground: 142 8% 10%;
+  --destructive: 0 84% 42%;
   --destructive-foreground: 0 0% 98%;
-  --input: 0 0% 82%;
+  --input: 0 0% 78%;
   --ring: 142 76% 36%;
   --chart-1: 142 76% 36%;
   --chart-2: 142 60% 28%;
@@ -284,5 +288,50 @@
   .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
   .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
     inset: -1px;
+  }
+
+  /* Animation delays for ambient effects */
+  .animation-delay-1000 {
+    animation-delay: 1s;
+  }
+  
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+  
+  .animation-delay-3000 {
+    animation-delay: 3s;
+  }
+  
+  .animation-delay-4000 {
+    animation-delay: 4s;
+  }
+  
+  .animation-delay-5000 {
+    animation-delay: 5s;
+  }
+
+  /* Enhanced hover states for better contrast */
+  .hover\:bg-accent:hover {
+    background-color: hsl(var(--accent));
+  }
+
+  .hover\:text-accent-foreground:hover {
+    color: hsl(var(--accent-foreground));
+  }
+
+  /* Table row hover enhancement */
+  tr:hover {
+    background-color: hsl(var(--muted) / 0.5);
+  }
+
+  /* Button hover enhancement */
+  button:hover:not(:disabled) {
+    filter: brightness(0.95);
+  }
+
+  /* Link hover enhancement */
+  a:hover {
+    color: hsl(var(--primary));
   }
 }

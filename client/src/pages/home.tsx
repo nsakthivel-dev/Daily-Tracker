@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
+import { motion } from "framer-motion";
 import { Header } from "@/components/header";
 import { WeekNavigation } from "@/components/week-navigation";
 import { RoutineTable } from "@/components/routine-table";
 import { ConsistencyChart } from "@/components/consistency-chart";
 import { ScreenTimeTracker } from "@/components/screen-time-tracker";
 import { PerformanceInsights } from "@/components/performance-insights";
+import { AmbientEffects } from "@/components/ambient-effects";
 import {
   type AppState,
   type DayOfWeek,
@@ -25,33 +27,74 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 function LoadingSkeleton() {
   return (
-    <div className="min-h-screen bg-background">
-      <div className="sticky top-0 z-50 w-full border-b border-border bg-background">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-14 items-center justify-between">
-            <Skeleton className="h-8 w-32" />
-            <Skeleton className="h-9 w-9 rounded-md" />
-          </div>
-        </div>
+    <div className="min-h-screen bg-game-background relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-soft-light filter blur-3xl opacity-5 animate-pulse"></div>
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-purple-500 rounded-full mix-blend-soft-light filter blur-3xl opacity-5 animate-pulse animation-delay-2000"></div>
       </div>
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        <Skeleton className="h-16 w-full rounded-lg" />
-        
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-3">
-            <Skeleton className="h-80 w-full rounded-lg" />
-          </div>
-          <div className="lg:col-span-6">
-            <Skeleton className="h-96 w-full rounded-lg" />
-          </div>
-          <div className="lg:col-span-3">
-            <Skeleton className="h-80 w-full rounded-lg" />
+      {/* Ambient particle effects */}
+      <AmbientEffects />
+      
+      <div className="relative z-10">
+        <div className="sticky top-0 z-50 w-full border-b border-game-border bg-game-background/80 backdrop-blur-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex h-16 items-center justify-between">
+              <Skeleton className="h-10 w-40 rounded-xl bg-game-card/70" />
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-9 w-24 rounded-lg bg-game-card/70" />
+                <Skeleton className="h-10 w-10 rounded-xl bg-game-card/70" />
+              </div>
+            </div>
           </div>
         </div>
         
-        <Skeleton className="h-40 w-full rounded-lg" />
-      </main>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Skeleton className="h-20 w-full rounded-xl bg-game-card/70" />
+          </motion.div>
+          
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+            <motion.div 
+              className="lg:col-span-3"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.1 }}
+            >
+              <Skeleton className="h-96 w-full rounded-xl bg-game-card/70" />
+            </motion.div>
+            <motion.div 
+              className="lg:col-span-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+            >
+              <Skeleton className="h-[500px] w-full rounded-xl bg-game-card/70" />
+            </motion.div>
+            <motion.div 
+              className="lg:col-span-3"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+            >
+              <Skeleton className="h-96 w-full rounded-xl bg-game-card/70" />
+            </motion.div>
+          </div>
+          
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.4 }}
+          >
+            <Skeleton className="h-48 w-full rounded-xl bg-game-card/70" />
+          </motion.div>
+        </main>
+      </div>
     </div>
   );
 }
@@ -61,12 +104,13 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const state = loadAppState();
-    setAppState(state);
-    setIsLoading(false);
+    loadAppState().then((state) => {
+      setAppState(state);
+      setIsLoading(false);
+    });
   }, []);
 
-  const handleCellClick = useCallback((
+  const handleCellClick = useCallback(async (
     routineIndex: number,
     day: DayOfWeek,
     newState: CellState
@@ -77,7 +121,7 @@ export default function Home() {
     });
   }, []);
 
-  const handleRoutineNameChange = useCallback((
+  const handleRoutineNameChange = useCallback(async (
     routineIndex: number,
     newName: string
   ) => {
@@ -87,7 +131,7 @@ export default function Home() {
     });
   }, []);
 
-  const handleScreenTimeChange = useCallback((
+  const handleScreenTimeChange = useCallback(async (
     day: DayOfWeek,
     hours: number
   ) => {
@@ -131,43 +175,87 @@ export default function Home() {
     : undefined;
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
+    <div className="min-h-screen bg-game-background relative overflow-hidden">
+      {/* Dynamic background elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-soft-light filter blur-3xl opacity-10 animate-pulse"></div>
+        <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-purple-500 rounded-full mix-blend-soft-light filter blur-3xl opacity-10 animate-pulse animation-delay-2000"></div>
+        <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-indigo-500 rounded-full mix-blend-soft-light filter blur-3xl opacity-10 animate-pulse animation-delay-3000"></div>
+        <div className="absolute bottom-1/3 right-1/3 w-64 h-64 bg-cyan-500 rounded-full mix-blend-soft-light filter blur-3xl opacity-10 animate-pulse animation-delay-4000"></div>
+      </div>
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-        <WeekNavigation
-          weekSummaries={weekSummaries}
-          selectedWeekId={appState.selectedWeekId}
-          currentWeekId={appState.currentWeekId}
-          onSelectWeek={handleSelectWeek}
-        />
+      {/* Ambient particle effects */}
+      <AmbientEffects />
+      
+      <div className="relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Header />
+        </motion.div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-3 order-2 lg:order-1">
-            <ConsistencyChart 
-              week={selectedWeek} 
-              previousWeekConsistency={previousWeekConsistency}
+        <main className="max-w-[90%] mx-auto px-2 sm:px-4 lg:px-6 py-6 space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.1 }}
+          >
+            <WeekNavigation
+              weekSummaries={weekSummaries}
+              selectedWeekId={appState.selectedWeekId}
+              currentWeekId={appState.currentWeekId}
+              onSelectWeek={handleSelectWeek}
             />
+          </motion.div>
+          
+          <div className="flex flex-col gap-6 px-0 py-2 w-full max-w-[90%] mx-auto">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.2 }}
+              className="rounded-xl w-full overflow-visible"
+            >
+              <RoutineTable
+                week={selectedWeek}
+                onCellClick={handleCellClick}
+                onRoutineNameChange={handleRoutineNameChange}
+              />
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.3 }}
+            >
+              <ConsistencyChart 
+                week={selectedWeek} 
+                previousWeekConsistency={previousWeekConsistency}
+              />
+            </motion.div>
+            
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.4 }}
+            >
+              <ScreenTimeTracker
+                week={selectedWeek}
+                onScreenTimeChange={handleScreenTimeChange}
+              />
+            </motion.div>
           </div>
           
-          <div className="lg:col-span-6 order-1 lg:order-2">
-            <RoutineTable
-              week={selectedWeek}
-              onCellClick={handleCellClick}
-              onRoutineNameChange={handleRoutineNameChange}
-            />
-          </div>
-          
-          <div className="lg:col-span-3 order-3">
-            <ScreenTimeTracker
-              week={selectedWeek}
-              onScreenTimeChange={handleScreenTimeChange}
-            />
-          </div>
-        </div>
-        
-        <PerformanceInsights stats={performanceStats} />
-      </main>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3, delay: 0.5 }}
+          >
+            <PerformanceInsights stats={performanceStats} />
+          </motion.div>
+        </main>
+      </div>
     </div>
   );
 }

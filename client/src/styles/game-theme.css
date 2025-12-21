@@ -1,0 +1,511 @@
+/* GAME THEME VARIABLES */
+:root.game-theme {
+  /* Primary theme colors - fantasy/adventure theme */
+  --game-primary: 210 80% 50%; /* Blue - quest progress */
+  --game-primary-foreground: 0 0% 100%;
+  
+  --game-secondary: 30 90% 60%; /* Orange - achievements */
+  --game-secondary-foreground: 0 0% 13%;
+  
+  --game-accent: 270 70% 60%; /* Purple - magic/enhancements */
+  --game-accent-foreground: 0 0% 100%;
+  
+  --game-success: 120 70% 45%; /* Green - completed tasks */
+  --game-warning: 45 100% 50%; /* Yellow - streak maintenance */
+  --game-danger: 0 90% 60%; /* Red - missed tasks */
+  
+  --game-background: 220 20% 15%; /* Dark blue-gray - night sky */
+  --game-foreground: 0 0% 95%;
+  
+  --game-card: 220 25% 20%; /* Slightly lighter - stone texture */
+  --game-card-foreground: 0 0% 95%;
+  --game-card-border: 220 20% 25%;
+  
+  --game-border: 220 20% 30%;
+  --game-input: 220 20% 35%;
+  
+  --game-sidebar: 220 30% 25%; /* Stone wall texture */
+  --game-sidebar-foreground: 0 0% 95%;
+  --game-sidebar-border: 220 25% 30%;
+  
+  --game-popover: 220 30% 22%;
+  --game-popover-foreground: 0 0% 95%;
+  --game-popover-border: 220 25% 35%;
+  
+  --game-muted: 220 20% 35%;
+  --game-muted-foreground: 220 20% 70%;
+  
+  --game-ring: 210 80% 60%;
+  
+  /* Game-specific variables */
+  --game-xp: 50 100% 60%; /* Gold - experience points */
+  --game-level: 210 100% 70%; /* Bright blue - level ups */
+  --game-streak: 0 80% 70%; /* Bright red - streaks */
+  --game-quest: 270 80% 70%; /* Bright purple - quests */
+  
+  /* Chart colors - elemental theme */
+  --game-chart-1: 210 100% 65%; /* Water - Monday */
+  --game-chart-2: 30 100% 60%; /* Fire - Tuesday */
+  --game-chart-3: 120 70% 50%; /* Earth - Wednesday */
+  --game-chart-4: 270 80% 70%; /* Air - Thursday */
+  --game-chart-5: 50 100% 60%; /* Lightning - Friday */
+  --game-chart-6: 180 80% 60%; /* Ice - Saturday */
+  --game-chart-7: 0 0% 80%; /* Metal - Sunday */
+  
+  /* Font family */
+  --game-font-sans: 'Press Start 2P', 'Inter', sans-serif;
+  --game-font-serif: 'Cinzel', Georgia, serif;
+  --game-font-mono: 'JetBrains Mono', monospace;
+  
+  /* Border radius - slightly more angular for game feel */
+  --game-radius: 0.375rem;
+  
+  /* Shadows - more dramatic for game feel */
+  --game-shadow-2xs: 0px 2px 0px 0px hsl(220 20% 10%);
+  --game-shadow-xs: 0px 2px 0px 0px hsl(220 20% 10%);
+  --game-shadow-sm: 0px 2px 0px 0px hsl(220 20% 10%), 0px 1px 2px -1px hsl(220 20% 5% / 0.3);
+  --game-shadow: 0px 2px 0px 0px hsl(220 20% 10%), 0px 1px 2px -1px hsl(220 20% 5% / 0.3);
+  --game-shadow-md: 0px 2px 0px 0px hsl(220 20% 10%), 0px 2px 4px -1px hsl(220 20% 5% / 0.4);
+  --game-shadow-lg: 0px 2px 0px 0px hsl(220 20% 10%), 0px 4px 6px -1px hsl(220 20% 5% / 0.5);
+  --game-shadow-xl: 0px 2px 0px 0px hsl(220 20% 10%), 0px 8px 10px -1px hsl(220 20% 5% / 0.6);
+  --game-shadow-2xl: 0px 2px 0px 0px hsl(220 20% 10%);
+  
+  /* Spacing adjustments for game elements */
+  --game-spacing: 0.25rem;
+  
+  /* Game-specific effects */
+  --game-glow-primary: 0 0 8px hsl(210 80% 50% / 0.6);
+  --game-glow-success: 0 0 8px hsl(120 70% 45% / 0.6);
+  --game-glow-warning: 0 0 8px hsl(45 100% 50% / 0.6);
+  --game-glow-danger: 0 0 8px hsl(0 90% 60% / 0.6);
+  --game-glow-xp: 0 0 8px hsl(50 100% 60% / 0.8);
+}
+
+/* Light game theme variant */
+:root.game-theme.light {
+  /* Adjusted for light mode */
+  --game-background: 210 30% 95%;
+  --game-foreground: 220 25% 10%;
+  
+  --game-card: 210 30% 90%;
+  --game-card-foreground: 220 25% 10%;
+  --game-card-border: 210 25% 75%;
+  
+  --game-border: 210 25% 70%;
+  --game-input: 210 25% 82%;
+  
+  --game-sidebar: 210 30% 85%;
+  --game-sidebar-foreground: 220 25% 10%;
+  --game-sidebar-border: 210 25% 65%;
+  
+  --game-popover: 210 30% 92%;
+  --game-popover-foreground: 220 25% 10%;
+  --game-popover-border: 210 25% 70%;
+  
+  --game-muted: 210 25% 78%;
+  --game-muted-foreground: 210 25% 32%;
+  
+  /* Lighter shadows for light mode */
+  --game-shadow-2xs: 0px 2px 0px 0px hsl(210 30% 85%);
+  --game-shadow-xs: 0px 2px 0px 0px hsl(210 30% 85%);
+  --game-shadow-sm: 0px 2px 0px 0px hsl(210 30% 85%), 0px 1px 2px -1px hsl(210 20% 70% / 0.2);
+  --game-shadow: 0px 2px 0px 0px hsl(210 30% 85%), 0px 1px 2px -1px hsl(210 20% 70% / 0.2);
+  --game-shadow-md: 0px 2px 0px 0px hsl(210 30% 85%), 0px 2px 4px -1px hsl(210 20% 70% / 0.3);
+  --game-shadow-lg: 0px 2px 0px 0px hsl(210 30% 85%), 0px 4px 6px -1px hsl(210 20% 70% / 0.4);
+  --game-shadow-xl: 0px 2px 0px 0px hsl(210 30% 85%), 0px 8px 10px -1px hsl(210 20% 70% / 0.5);
+  --game-shadow-2xl: 0px 2px 0px 0px hsl(210 30% 85%);
+  
+  /* Adjusted glow effects for light mode */
+  --game-glow-primary: 0 0 8px hsl(210 80% 50% / 0.4);
+  --game-glow-success: 0 0 8px hsl(120 70% 45% / 0.4);
+  --game-glow-warning: 0 0 8px hsl(45 100% 50% / 0.4);
+  --game-glow-danger: 0 0 8px hsl(0 90% 60% / 0.4);
+  --game-glow-xp: 0 0 8px hsl(50 100% 60% / 0.6);
+}
+
+/* Game theme utilities */
+.game-theme {
+  /* Animated background for game feel */
+  background-image: 
+    radial-gradient(circle at 10% 20%, hsl(220 25% 25% / 0.3) 0%, transparent 20%),
+    radial-gradient(circle at 90% 80%, hsl(270 30% 30% / 0.3) 0%, transparent 20%);
+  
+  /* Subtle animated gradient overlay */
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      45deg,
+      hsl(220 25% 25% / 0.1) 0%,
+      hsl(270 30% 30% / 0.1) 25%,
+      hsl(210 80% 50% / 0.1) 50%,
+      hsl(30 90% 60% / 0.1) 75%,
+      hsl(220 25% 25% / 0.1) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    z-index: -1;
+  }
+}
+
+/* Game-themed card styles */
+.game-card {
+  border: 2px solid hsl(var(--game-card-border));
+  box-shadow: var(--game-shadow-lg);
+  border-radius: var(--game-radius);
+  background: linear-gradient(
+    145deg, 
+    hsl(var(--game-card) / 0.9) 0%, 
+    hsl(var(--game-card) / 0.7) 100%
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+.game-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    hsl(var(--game-primary)), 
+    hsl(var(--game-secondary)), 
+    hsl(var(--game-accent))
+  );
+}
+
+/* Game-themed button styles */
+.game-button {
+  border: 2px solid transparent;
+  border-radius: var(--game-radius);
+  background: linear-gradient(
+    145deg, 
+    hsl(var(--game-primary)) 0%, 
+    hsl(var(--game-primary) / 0.8) 100%
+  );
+  color: hsl(var(--game-primary-foreground));
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: var(--game-shadow);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.game-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--game-shadow-lg);
+}
+
+.game-button:active {
+  transform: translateY(0);
+  box-shadow: var(--game-shadow-sm);
+}
+
+.game-button::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transition: left 0.5s;
+}
+
+.game-button:hover::after {
+  left: 100%;
+}
+
+/* XP bar styling */
+.xp-bar-container {
+  height: 20px;
+  border: 2px solid hsl(var(--game-border));
+  border-radius: 10px;
+  background: hsl(var(--game-muted) / 0.5);
+  overflow: hidden;
+  position: relative;
+  box-shadow: inset 0 1px 2px hsl(var(--game-background) / 0.5);
+}
+
+.xp-bar-fill {
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    hsl(var(--game-xp)), 
+    hsl(var(--game-warning))
+  );
+  border-radius: 8px;
+  position: relative;
+  transition: width 0.3s ease;
+  box-shadow: 0 0 8px hsl(var(--game-xp) / 0.6);
+}
+
+.xp-bar-fill::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255, 215, 0, 0.8) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Level up animation */
+@keyframes levelUp {
+  0% { transform: scale(1); box-shadow: none; }
+  50% { transform: scale(1.1); box-shadow: var(--game-glow-primary); }
+  100% { transform: scale(1); box-shadow: none; }
+}
+
+.level-up {
+  animation: levelUp 0.5s ease;
+}
+
+/* Streak effect */
+.streak-active {
+  box-shadow: var(--game-glow-warning);
+  position: relative;
+}
+
+.streak-active::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid hsl(var(--game-warning));
+  border-radius: var(--game-radius);
+  animation: pulse 1.5s infinite;
+  pointer-events: none;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.7; }
+  50% { opacity: 0.3; }
+  100% { opacity: 0.7; }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Achievement badge */
+.achievement-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  background: linear-gradient(
+    145deg, 
+    hsl(var(--game-secondary)) 0%, 
+    hsl(var(--game-secondary) / 0.8) 100%
+  );
+  color: hsl(var(--game-secondary-foreground));
+  font-size: 0.75rem;
+  font-weight: bold;
+  box-shadow: var(--game-shadow-sm);
+}
+
+/* Quest marker */
+.quest-marker {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: hsl(var(--game-quest));
+  box-shadow: var(--game-glow-primary);
+  position: relative;
+}
+
+.quest-marker::after {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  border: 2px solid hsl(var(--game-quest));
+  border-radius: 50%;
+  animation: questPulse 2s infinite;
+}
+
+@keyframes questPulse {
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 0.7; }
+}
+
+/* Game-themed table */
+.game-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.game-table th,
+.game-table td {
+  border: 1px solid hsl(var(--game-border));
+  padding: 0.75rem;
+  text-align: center;
+}
+
+.game-table th {
+  background: linear-gradient(
+    180deg, 
+    hsl(var(--game-sidebar)) 0%, 
+    hsl(var(--game-card)) 100%
+  );
+  color: hsl(var(--game-foreground));
+  font-weight: bold;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  position: relative;
+}
+
+.game-table th::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, 
+    hsl(var(--game-primary)), 
+    hsl(var(--game-secondary))
+  );
+}
+
+.game-table tr:nth-child(even) {
+  background: hsl(var(--game-card) / 0.5);
+}
+
+/* Game-themed cell states */
+.cell-completed {
+  background: linear-gradient(
+    145deg, 
+    hsl(var(--game-success) / 0.3) 0%, 
+    hsl(var(--game-success) / 0.1) 100%
+  );
+  border: 2px solid hsl(var(--game-success));
+  border-radius: var(--game-radius);
+}
+
+.cell-not-completed {
+  background: linear-gradient(
+    145deg, 
+    hsl(var(--game-danger) / 0.3) 0%, 
+    hsl(var(--game-danger) / 0.1) 100%
+  );
+  border: 2px solid hsl(var(--game-danger));
+  border-radius: var(--game-radius);
+}
+
+.cell-empty {
+  background: hsl(var(--game-muted) / 0.3);
+  border: 2px dashed hsl(var(--game-border));
+  border-radius: var(--game-radius);
+}
+
+/* Utility classes mapped to game theme variables */
+.bg-game-background { background-color: hsl(var(--game-background)); }
+.text-game-foreground { color: hsl(var(--game-foreground)); }
+.text-game-muted-foreground { color: hsl(var(--game-muted-foreground)); }
+.text-game-muted-foreground\/70 { color: hsl(var(--game-muted-foreground) / 0.7); }
+.border-game-border { border-color: hsl(var(--game-border)); }
+.bg-game-card { background-color: hsl(var(--game-card)); }
+.bg-game-card\/20 { background-color: hsl(var(--game-card) / 0.2); }
+.bg-game-card\/30 { background-color: hsl(var(--game-card) / 0.3); }
+.bg-game-card\/50 { background-color: hsl(var(--game-card) / 0.5); }
+.bg-game-popover { background-color: hsl(var(--game-popover)); }
+.border-game-popover-border { border-color: hsl(var(--game-popover-border)); }
+.bg-game-muted { background-color: hsl(var(--game-muted)); }
+.bg-game-input { background-color: hsl(var(--game-input)); }
+.text-game-primary { color: hsl(var(--game-primary)); }
+.bg-game-primary { background-color: hsl(var(--game-primary)); }
+.text-game-secondary { color: hsl(var(--game-secondary)); }
+.bg-game-secondary { background-color: hsl(var(--game-secondary)); }
+.text-game-accent { color: hsl(var(--game-accent)); }
+.bg-game-accent { background-color: hsl(var(--game-accent)); }
+.text-game-success { color: hsl(var(--game-success)); }
+.bg-game-success { background-color: hsl(var(--game-success)); }
+.text-game-warning { color: hsl(var(--game-warning)); }
+.bg-game-warning { background-color: hsl(var(--game-warning)); }
+.text-game-danger { color: hsl(var(--game-danger)); }
+.bg-game-danger { background-color: hsl(var(--game-danger)); }
+
+/* Refined card styling */
+.game-card {
+  border: 1px solid hsl(var(--game-card-border));
+  box-shadow: var(--game-shadow-md);
+  border-radius: var(--game-radius);
+  background: linear-gradient(
+    180deg,
+    hsl(var(--game-card) / 0.95) 0%,
+    hsl(var(--game-card) / 0.85) 100%
+  );
+}
+
+/* Cleaner table look */
+.game-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+}
+
+.game-table th,
+.game-table td {
+  border: 1px solid hsl(var(--game-border) / 0.6);
+}
+
+.game-table th {
+  padding: 0.75rem 1rem;
+  background: linear-gradient(
+    180deg,
+    hsl(var(--game-sidebar) / 0.9) 0%,
+    hsl(var(--game-card) / 0.9) 100%
+  );
+  color: hsl(var(--game-foreground));
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.game-table td {
+  padding: 0.5rem 0.75rem;
+  background: hsl(var(--game-card) / 0.35);
+}
+
+.game-table tbody tr:hover {
+  background: hsl(var(--game-card) / 0.7);
+  transition: background-color 0.2s ease;
+}
+
+.game-table tbody tr:hover td {
+  color: hsl(var(--game-foreground));
+}
+
+.game-table tfoot td {
+  background: hsl(var(--game-card) / 0.4);
+}

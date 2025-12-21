@@ -8,7 +8,7 @@ import {
 } from "@shared/schema";
 import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, TrendingDown, Minus } from "lucide-react";
+import { TrendingUp, TrendingDown, Minus, Trophy, Zap, Target } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -19,6 +19,8 @@ import {
   ResponsiveContainer,
   Area,
   AreaChart,
+  BarChart,
+  Bar,
 } from "recharts";
 
 interface ConsistencyChartProps {
@@ -60,108 +62,134 @@ export function ConsistencyChart({ week, previousWeekConsistency }: ConsistencyC
   }
 
   return (
-    <Card className="h-full">
-      <CardHeader className="pb-2">
-        <CardTitle className="text-base font-semibold flex items-center justify-between gap-2 flex-wrap">
-          <span>Weekly Consistency</span>
-          <div className="flex items-center gap-1.5">
-            <span className="font-mono text-2xl text-primary" data-testid="text-week-consistency">
-              {weekConsistency}%
-            </span>
-            {trend === "up" && <TrendingUp className="w-4 h-4 text-primary" />}
-            {trend === "down" && <TrendingDown className="w-4 h-4 text-destructive" />}
-            {trend === "stable" && <Minus className="w-4 h-4 text-muted-foreground" />}
-          </div>
-        </CardTitle>
+    <Card className="h-full game-theme:game-card relative overflow-hidden group hover:shadow-lg transition-all duration-300">
+      {/* Glow effect */}
+      <div className="absolute inset-0 rounded-lg bg-gradient-to-br from-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-xl -z-10"></div>
+      
+      <CardHeader className="pb-2 bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-lg relative overflow-hidden">
+        {/* Shine effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div className="relative z-10">
+          <CardTitle className="text-base font-bold flex items-center justify-between gap-2 flex-wrap text-white">
+            <div className="flex items-center gap-2">
+              <div className="p-1.5 rounded-lg bg-black/20">
+                <Target className="w-4 h-4" />
+              </div>
+              <span>Quest Completion</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 bg-black/30 px-2 py-1 rounded-lg shadow-md">
+                <Trophy className="w-4 h-4 text-yellow-400" />
+                <span className="font-mono text-xl" data-testid="text-week-consistency">
+                  {weekConsistency}%
+                </span>
+              </div>
+              <div className="p-1.5 rounded-lg bg-black/20">
+                {trend === "up" && <TrendingUp className="w-4 h-4 text-green-400" />}
+                {trend === "down" && <TrendingDown className="w-4 h-4 text-red-400" />}
+                {trend === "stable" && <Minus className="w-4 h-4 text-gray-400" />}
+              </div>
+            </div>
+          </CardTitle>
+        </div>
       </CardHeader>
-      <CardContent className="pt-4">
+      <CardContent className="pt-3 relative z-10">
         <div className="h-[180px] w-full" data-testid="consistency-line-chart">
           <ResponsiveContainer width="100%" height="100%">
-            <AreaChart
+            <BarChart
               data={chartData}
-              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
+              margin={{ top: 10, right: 10, left: -15, bottom: 0 }}
             >
-              <defs>
-                <linearGradient id="colorPercentage" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                  <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
-                </linearGradient>
-              </defs>
               <CartesianGrid 
                 strokeDasharray="3 3" 
                 vertical={false}
-                stroke="hsl(var(--border))"
+                stroke="hsl(var(--game-border))"
               />
               <XAxis 
                 dataKey="day" 
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 12, fill: 'hsl(var(--muted-foreground))' }}
-                dy={10}
+                tick={{ fontSize: 12, fill: 'hsl(var(--game-foreground))', fontWeight: 500 }}
+                dy={8}
               />
               <YAxis 
                 domain={[0, 100]}
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 11, fill: 'hsl(var(--muted-foreground))' }}
+                tick={{ fontSize: 11, fill: 'hsl(var(--game-muted-foreground))' }}
                 tickFormatter={(value) => `${value}%`}
-                width={45}
+                width={40}
               />
               <Tooltip
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
                     return (
-                      <div className="bg-popover border border-popover-border rounded-md p-2 shadow-md">
-                        <p className="text-sm font-medium">{data.fullDay}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {data.completed}/{data.total} completed
+                      <div className="bg-game-popover border border-game-popover-border rounded-lg p-3 shadow-xl backdrop-blur-sm">
+                        <div className="flex items-center gap-2 mb-2">
+                          <div className="p-1 rounded-md bg-gradient-to-br from-yellow-400 to-orange-500 text-white">
+                            <Zap className="w-3 h-3" />
+                          </div>
+                          <p className="text-sm font-bold text-game-foreground">{data.fullDay}</p>
+                        </div>
+                        <p className="text-xs text-game-muted-foreground mb-2">
+                          {data.completed}/{data.total} quests completed
                         </p>
-                        <p className={cn(
-                          "text-sm font-mono font-semibold",
-                          data.percentage >= 70 ? "text-primary" :
-                          data.percentage >= 40 ? "text-chart-3" :
-                          "text-muted-foreground"
-                        )}>
-                          {data.percentage}%
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <div className="w-full bg-game-muted rounded-full h-2">
+                            <div 
+                              className="bg-gradient-to-r from-game-success to-game-warning h-2 rounded-full" 
+                              style={{ width: `${data.percentage}%` }}
+                            ></div>
+                          </div>
+                          <span className="text-xs font-bold text-game-foreground">{data.percentage}%</span>
+                        </div>
                       </div>
                     );
                   }
                   return null;
                 }}
               />
-              <Area
-                type="monotone"
+              <Bar
                 dataKey="percentage"
-                stroke="hsl(var(--primary))"
-                strokeWidth={2.5}
-                fill="url(#colorPercentage)"
-                dot={{
-                  r: 4,
-                  fill: 'hsl(var(--primary))',
-                  strokeWidth: 2,
-                  stroke: 'hsl(var(--background))'
-                }}
-                activeDot={{
-                  r: 6,
-                  fill: 'hsl(var(--primary))',
-                  strokeWidth: 2,
-                  stroke: 'hsl(var(--background))'
+                fill="hsl(var(--game-primary))"
+                radius={[4, 4, 0, 0]}
+                barSize={20}
+                shape={(props) => {
+                  const { x, y, width, height, value } = props;
+                  const fillColor = 
+                    value >= 80 ? 'hsl(var(--game-success))' :
+                    value >= 60 ? 'hsl(var(--game-warning))' :
+                    'hsl(var(--game-danger))';
+                  return (
+                    <rect
+                      x={x}
+                      y={y}
+                      width={width}
+                      height={height}
+                      fill={fillColor}
+                      rx={4}
+                      ry={4}
+                      className="transition-all duration-300 hover:opacity-90"
+                    />
+                  );
                 }}
               />
-            </AreaChart>
+            </BarChart>
           </ResponsiveContainer>
         </div>
         
-        <div className="mt-4 pt-4 border-t border-border flex items-center justify-between gap-2 flex-wrap">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-0.5 bg-primary rounded-full" />
-            <span className="text-xs text-muted-foreground">Daily completion rate</span>
+        <div className="mt-3 pt-3 border-t border-game-border flex items-center justify-between gap-2 flex-wrap">
+          <div className="flex items-center gap-2 bg-game-card/30 px-3 py-1.5 rounded-lg border border-game-border">
+            <div className="w-8 h-0.5 bg-gradient-to-r from-game-primary to-game-secondary rounded-full" />
+            <span className="text-xs text-game-muted-foreground font-medium">Daily quest completion rate</span>
           </div>
-          <p className="text-xs text-muted-foreground">
-            {getWeekLabel(week.weekStart, week.weekEnd)}
-          </p>
+          <div className="flex items-center gap-1.5 bg-game-card/30 px-3 py-1.5 rounded-lg border border-game-border">
+            <Zap className="w-3 h-3 text-yellow-400" />
+            <p className="text-xs text-game-muted-foreground font-medium">
+              {getWeekLabel(week.weekStart, week.weekEnd)}
+            </p>
+          </div>
         </div>
       </CardContent>
     </Card>

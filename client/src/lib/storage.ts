@@ -27,8 +27,57 @@ function getInitialState(): AppState {
   };
 }
 
-export function loadAppState(): AppState {
+let cachedUserData: AppState | null = null;
+let lastUserId: string | null = null;
+
+export async function loadAppState(): Promise<AppState> {
   try {
+    // Check if user is authenticated
+    const userResponse = await fetch("/auth/user", { credentials: "include" });
+    const userData = await userResponse.json();
+    
+    if (userData.id) {
+      // User is authenticated, check if we have cached data for this user
+      if (cachedUserData && lastUserId === userData.id) {
+        return cachedUserData;
+      }
+      
+      // Fetch user data from server
+      const response = await fetch(`/api/user/data`, { credentials: "include" });
+      if (response.ok) {
+        const serverState: AppState = await response.json();
+        
+        // Cache the data
+        cachedUserData = serverState;
+        lastUserId = userData.id;
+        
+        // Update week information
+        const today = new Date();
+        const currentMonday = getMonday(today);
+        const currentWeekId = `week-${currentMonday.toISOString().split('T')[0]}`;
+        
+        const existingCurrentWeek = serverState.weeks.find(w => w.id === currentWeekId);
+        
+        if (!existingCurrentWeek) {
+          serverState.weeks = serverState.weeks.map(w => ({ ...w, isCurrentWeek: false }));
+          
+          const newWeek = createEmptyWeek(currentMonday);
+          serverState.weeks.push(newWeek);
+          serverState.currentWeekId = newWeek.id;
+          serverState.selectedWeekId = newWeek.id;
+        } else {
+          serverState.currentWeekId = currentWeekId;
+          serverState.weeks = serverState.weeks.map(w => ({
+            ...w,
+            isCurrentWeek: w.id === currentWeekId
+          }));
+        }
+        
+        return serverState;
+      }
+    }
+    
+    // User not authenticated, use localStorage
     const stored = localStorage.getItem(STORAGE_KEY);
     if (!stored) {
       return getInitialState();
@@ -65,21 +114,47 @@ export function loadAppState(): AppState {
   }
 }
 
-export function saveAppState(state: AppState): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+export async function saveAppState(state: AppState): Promise<void> {
+  // Check if user is authenticated
+  const userResponse = await fetch("/auth/user", { credentials: "include" });
+  const userData = await userResponse.json();
+  
+  if (userData.id) {
+    // User is authenticated, save to server
+    try {
+      await fetch(`/api/user/data`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(state),
+      });
+      
+      // Update cache
+      cachedUserData = state;
+      lastUserId = userData.id;
+    } catch (error) {
+      console.error("Failed to save data to server:", error);
+      // Fallback to localStorage
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+  } else {
+    // User not authenticated, save to localStorage
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
 }
 
-export function updateRoutineCell(
+export async function updateRoutineCell(
   state: AppState,
   routineIndex: number,
   day: DayOfWeek,
   newState: CellState
-): AppState {
+): Promise<AppState> {
   const weekIndex = state.weeks.findIndex(w => w.id === state.selectedWeekId);
   if (weekIndex === -1) return state;
   
   const week = state.weeks[weekIndex];
-  if (!week.isCurrentWeek) return state;
   
   const updatedWeeks = [...state.weeks];
   const updatedRoutines = [...week.routines];
@@ -97,20 +172,19 @@ export function updateRoutineCell(
   };
   
   const newAppState = { ...state, weeks: updatedWeeks };
-  saveAppState(newAppState);
+  await saveAppState(newAppState);
   return newAppState;
 }
 
-export function updateRoutineName(
+export async function updateRoutineName(
   state: AppState,
   routineIndex: number,
   newName: string
-): AppState {
+): Promise<AppState> {
   const weekIndex = state.weeks.findIndex(w => w.id === state.selectedWeekId);
   if (weekIndex === -1) return state;
   
   const week = state.weeks[weekIndex];
-  if (!week.isCurrentWeek) return state;
   
   const updatedWeeks = [...state.weeks];
   const updatedRoutines = [...week.routines];
@@ -125,20 +199,19 @@ export function updateRoutineName(
   };
   
   const newAppState = { ...state, weeks: updatedWeeks };
-  saveAppState(newAppState);
+  await saveAppState(newAppState);
   return newAppState;
 }
 
-export function updateScreenTime(
+export async function updateScreenTime(
   state: AppState,
   day: DayOfWeek,
   hours: number
-): AppState {
+): Promise<AppState> {
   const weekIndex = state.weeks.findIndex(w => w.id === state.selectedWeekId);
   if (weekIndex === -1) return state;
   
   const week = state.weeks[weekIndex];
-  if (!week.isCurrentWeek) return state;
   
   const updatedWeeks = [...state.weeks];
   updatedWeeks[weekIndex] = {
@@ -150,7 +223,7 @@ export function updateScreenTime(
   };
   
   const newAppState = { ...state, weeks: updatedWeeks };
-  saveAppState(newAppState);
+  await saveAppState(newAppState);
   return newAppState;
 }
 

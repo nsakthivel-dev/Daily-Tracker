@@ -1,16 +1,53 @@
+import dotenv from "dotenv";
+import path from "path";
+
+dotenv.config({ path: path.resolve(process.cwd(), ".env") });
+
 import express, { type Request, Response, NextFunction } from "express";
+import session from "express-session";
+import passport from "passport";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
+import { randomBytes } from "crypto";
 
 const app = express();
 const httpServer = createServer(app);
+
+// Initialize authentication after app creation
+import "./auth";
 
 declare module "http" {
   interface IncomingMessage {
     rawBody: unknown;
   }
 }
+
+declare module "express-session" {
+  interface SessionData {
+    passport: any;
+    userId?: string;
+  }
+}
+
+// Configure session middleware
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || randomBytes(32).toString("hex"),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : false,
+    },
+  })
+);
+
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(
   express.json({
@@ -80,19 +117,17 @@ app.use((req, res, next) => {
     await setupVite(httpServer, app);
   }
 
-  // ALWAYS serve the app on the port specified in the environment variable PORT
-  // Other ports are firewalled. Default to 5000 if not specified.
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || "5000", 10);
-  httpServer.listen(
-    {
-      port,
-      host: "0.0.0.0",
-      reusePort: true,
-    },
-    () => {
-      log(`serving on port ${port}`);
-    },
-  );
+  // Serve the app on the port specified in the environment variable PORT
+  // On Render, this will be automatically set (typically to 10000)
+  // Default to 3000 if not specified (for local development).
+  // This serves both the API and the client.
+  const port = parseInt(process.env.PORT || "3000", 10);
+  httpServer.listen(port, () => {
+    log(`serving on port ${port}`);
+    console.log(`
+
+🚀 Server ready at: http://localhost:${port}
+
+`);
+  });
 })();
