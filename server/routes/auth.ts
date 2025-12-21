@@ -1,5 +1,6 @@
 import { Router } from "express";
-import passport from "passport";
+import * as passport from "passport";
+import { type User } from "../storage";
 
 const router = Router();
 
@@ -18,32 +19,16 @@ const getBaseUrl = (req: any): string => {
 // Google OAuth routes
 router.get(
   "/auth/google",
-  (req, res, next) => {
-    if (process.env.NODE_ENV === "production") {
-      const baseUrl = getBaseUrl(req);
-      const authenticator = passport.authenticate("google", { 
-        scope: ["profile", "email"],
-        callbackURL: `${baseUrl}/auth/google/callback`
-      });
-      return authenticator(req, res, next);
-    }
-    return passport.authenticate("google", { scope: ["profile", "email"] })(req, res, next);
-  }
+  passport.authenticate("google", { 
+    scope: ["profile", "email"]
+  })
 );
 
 router.get(
   "/auth/google/callback",
-  (req, res, next) => {
-    if (process.env.NODE_ENV === "production") {
-      const baseUrl = getBaseUrl(req);
-      const authenticator = passport.authenticate("google", { 
-        failureRedirect: "/",
-        callbackURL: `${baseUrl}/auth/google/callback`
-      });
-      return authenticator(req, res, next);
-    }
-    return passport.authenticate("google", { failureRedirect: "/" })(req, res, next);
-  },
+  passport.authenticate("google", { 
+    failureRedirect: "/"
+  }),
   (req, res) => {
     // Successful authentication, redirect to home
     res.redirect("/");
@@ -65,10 +50,11 @@ router.post("/auth/logout", (req, res, next) => {
 // Get current user
 router.get("/auth/user", (req, res) => {
   if (req.user) {
+    const user = req.user as User;
     res.json({
-      id: req.user.id,
-      displayName: req.user.displayName,
-      email: req.user.email,
+      id: user.id,
+      displayName: user.displayName,
+      email: user.email,
     });
   } else {
     res.status(401).json({ message: "Not authenticated" });
