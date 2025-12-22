@@ -11,6 +11,7 @@ import {
   type AppState,
   type DayOfWeek,
   type CellState,
+  type Routine,
   calculateWeekConsistency,
 } from "@shared/schema";
 import {
@@ -18,6 +19,8 @@ import {
   getSelectedWeek,
   updateRoutineCell,
   updateRoutineName,
+  addRoutine,
+  deleteRoutine,
   updateScreenTime,
   selectWeek,
   getAllWeekSummaries,
@@ -131,6 +134,20 @@ export default function Home() {
     });
   }, []);
 
+  const handleAddRoutine = useCallback(async (routine: Routine) => {
+    setAppState((prev) => {
+      if (!prev) return prev;
+      return addRoutine(prev, routine);
+    });
+  }, []);
+
+  const handleDeleteRoutine = useCallback(async (routineIndex: number) => {
+    setAppState((prev) => {
+      if (!prev) return prev;
+      return deleteRoutine(prev, routineIndex);
+    });
+  }, []);
+
   const handleScreenTimeChange = useCallback(async (
     day: DayOfWeek,
     hours: number
@@ -221,6 +238,8 @@ export default function Home() {
                 week={selectedWeek}
                 onCellClick={handleCellClick}
                 onRoutineNameChange={handleRoutineNameChange}
+                onAddRoutine={handleAddRoutine}
+                onDeleteRoutine={handleDeleteRoutine}
               />
             </motion.div>
             

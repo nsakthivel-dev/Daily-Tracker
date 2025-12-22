@@ -1,6 +1,7 @@
 import { 
   type WeekData, 
   type AppState, 
+  type Routine,
   createEmptyWeek, 
   getMonday,
   DAYS_OF_WEEK,
@@ -192,6 +193,52 @@ export async function updateRoutineName(
     ...updatedRoutines[routineIndex],
     name: newName,
   };
+  
+  updatedWeeks[weekIndex] = {
+    ...week,
+    routines: updatedRoutines,
+  };
+  
+  const newAppState = { ...state, weeks: updatedWeeks };
+  await saveAppState(newAppState);
+  return newAppState;
+}
+
+export async function addRoutine(
+  state: AppState,
+  routine: Routine
+): Promise<AppState> {
+  const weekIndex = state.weeks.findIndex(w => w.id === state.selectedWeekId);
+  if (weekIndex === -1) return state;
+  
+  const week = state.weeks[weekIndex];
+  
+  const updatedWeeks = [...state.weeks];
+  updatedWeeks[weekIndex] = {
+    ...week,
+    routines: [...week.routines, routine],
+  };
+  
+  const newAppState = { ...state, weeks: updatedWeeks };
+  await saveAppState(newAppState);
+  return newAppState;
+}
+
+export async function deleteRoutine(
+  state: AppState,
+  routineIndex: number
+): Promise<AppState> {
+  const weekIndex = state.weeks.findIndex(w => w.id === state.selectedWeekId);
+  if (weekIndex === -1) return state;
+  
+  const week = state.weeks[weekIndex];
+  
+  // Prevent deleting all routines
+  if (week.routines.length <= 1) return state;
+  
+  const updatedWeeks = [...state.weeks];
+  const updatedRoutines = [...week.routines];
+  updatedRoutines.splice(routineIndex, 1);
   
   updatedWeeks[weekIndex] = {
     ...week,

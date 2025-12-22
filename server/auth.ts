@@ -1,9 +1,9 @@
-import * as passport from "passport";
+import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { storage } from "./storage";
 import { type User } from "./storage";
-import dotenv = require("dotenv");
-import path = require("path");
+import dotenv from "dotenv";
+import path from "path";
 
 dotenv.config({ path: path.resolve(process.cwd(), ".env") });
 

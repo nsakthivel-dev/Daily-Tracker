@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import { Check, X, Pencil, Shield, Star, Sword, ShieldX } from "lucide-react";
+import { Check, X, Pencil, Shield, Star, Sword, ShieldX, Plus, Trash2 } from "lucide-react";
 import { 
   type WeekData, 
   type DayOfWeek, 
   type CellState,
+  type Routine,
   DAYS_OF_WEEK,
   getDayCompletionCount,
   getWeekLabel
 } from "@shared/schema";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { soundManager } from "@/lib/sound-manager";
 
@@ -16,6 +18,8 @@ interface RoutineTableProps {
   week: WeekData;
   onCellClick: (routineIndex: number, day: DayOfWeek, newState: CellState) => Promise<void>;
   onRoutineNameChange: (routineIndex: number, newName: string) => Promise<void>;
+  onAddRoutine?: (routine: Routine) => Promise<void>;
+  onDeleteRoutine?: (routineIndex: number) => Promise<void>;
 }
 
 const SHORT_DAYS: Record<DayOfWeek, string> = {
@@ -72,9 +76,11 @@ function CellContent({ state }: { state: CellState }) {
   );
 }
 
-export function RoutineTable({ week, onCellClick, onRoutineNameChange }: RoutineTableProps) {
+export function RoutineTable({ week, onCellClick, onRoutineNameChange, onAddRoutine, onDeleteRoutine }: RoutineTableProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [editValue, setEditValue] = useState("");
+  const [addingNew, setAddingNew] = useState(false);
+  const [newRoutineName, setNewRoutineName] = useState("");
   const isReadOnly = !week.isCurrentWeek;
   
   // Resume audio context on first user interaction
@@ -124,6 +130,62 @@ export function RoutineTable({ week, onCellClick, onRoutineNameChange }: Routine
       handleSaveEdit();
     } else if (e.key === "Escape") {
       handleCancelEdit();
+    }
+  };
+  
+  const handleAddNewClick = () => {
+    if (isReadOnly) return;
+    soundManager.playSound("click");
+    setAddingNew(true);
+    setNewRoutineName("");
+  };
+  
+  const handleSaveNew = async () => {
+    if (newRoutineName.trim() && onAddRoutine) {
+      try {
+        const newRoutine: Routine = {
+          name: newRoutineName.trim(),
+          cells: DAYS_OF_WEEK.reduce((acc, day) => {
+            acc[day] = { state: "empty" };
+            return acc;
+          }, {} as Record<DayOfWeek, { state: CellState }>),
+        };
+        await onAddRoutine(newRoutine);
+        soundManager.playSound("complete");
+      } catch (error) {
+        console.error("Error adding new routine:", error);
+        soundManager.playSound("error");
+      }
+    }
+    setAddingNew(false);
+    setNewRoutineName("");
+  };
+  
+  const handleCancelNew = () => {
+    setAddingNew(false);
+    setNewRoutineName("");
+  };
+  
+  const handleNewKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSaveNew();
+    } else if (e.key === "Escape") {
+      handleCancelNew();
+    }
+  };
+  
+  const handleDeleteClick = async (index: number) => {
+    if (isReadOnly || !onDeleteRoutine) return;
+    
+    // Confirm deletion
+    if (window.confirm(`Are you sure you want to delete the routine "${week.routines[index].name}"?`)) {
+      try {
+        await onDeleteRoutine(index);
+        soundManager.playSound("complete");
+      } catch (error) {
+        console.error("Error deleting routine:", error);
+        soundManager.playSound("error");
+      }
     }
   };
 
@@ -193,7 +255,7 @@ export function RoutineTable({ week, onCellClick, onRoutineNameChange }: Routine
                   routineIndex % 2 === 0 ? "bg-game-card/30" : "bg-game-card/50"
                 )}
               >
-                  <td className="p-1.5 sm:p-2 border-b border-game-border bg-game-card/20 relative group/table-row">
+                <td className="p-1.5 sm:p-2 border-b border-game-border bg-game-card/20 relative group/table-row">
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-game-primary/10 to-transparent opacity-0 group-hover/table-row:opacity-100 transition-opacity duration-500 z-0"></div>
                   <div className="flex items-center gap-1 sm:gap-2 w-full">
                     {editingIndex === routineIndex ? (
@@ -229,18 +291,29 @@ export function RoutineTable({ week, onCellClick, onRoutineNameChange }: Routine
                         <span className="text-xs sm:text-sm font-medium truncate flex-1 group-hover/table-row:text-game-primary transition-colors duration-300 text-game-foreground">
                           {routine.name}
                         </span>
-                        {!isReadOnly && (
-                          <button
-                            onClick={() => handleStartEdit(routineIndex, routine.name)}
-                            className="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-game-primary/20 hover:bg-game-primary/40 border border-game-primary/30 hover:border-game-primary/60 transition-all duration-300 flex-shrink-0 group/edit-btn hover:scale-110 active:scale-95 relative z-10"
-                            data-testid={`button-edit-routine-${routineIndex}`}
-                            title="Edit quest name"
-                            type="button"
-                          >
-                            <Pencil className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-game-primary group-hover/edit-btn:text-white transition-colors duration-300" />
-                          </button>
-                        )}
-                        {isReadOnly && (
+                        {!isReadOnly ? (
+                          <div className="flex items-center gap-1">
+                            <button
+                              onClick={() => handleStartEdit(routineIndex, routine.name)}
+                              className="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-game-primary/20 hover:bg-game-primary/40 border border-game-primary/30 hover:border-game-primary/60 transition-all duration-300 flex-shrink-0 group/edit-btn hover:scale-110 active:scale-95 relative z-10"
+                              data-testid={`button-edit-routine-${routineIndex}`}
+                              title="Edit quest name"
+                              type="button"
+                            >
+                              <Pencil className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-game-primary group-hover/edit-btn:text-white transition-colors duration-300" />
+                            </button>
+                            {week.routines.length > 1 && (
+                              <button
+                                onClick={() => handleDeleteClick(routineIndex)}
+                                className="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-red-500/20 hover:bg-red-500/40 border border-red-500/30 hover:border-red-500/60 transition-all duration-300 flex-shrink-0 group/delete-btn hover:scale-110 active:scale-95 relative z-10"
+                                title="Delete quest"
+                                type="button"
+                              >
+                                <Trash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-red-500 group-hover/delete-btn:text-white transition-colors duration-300" />
+                              </button>
+                            )}
+                          </div>
+                        ) : (
                           <div className="flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-gray-500/20 border border-gray-500/30 flex-shrink-0" title="Cannot edit archived quests">
                             <Pencil className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-gray-500" />
                           </div>
@@ -288,6 +361,49 @@ export function RoutineTable({ week, onCellClick, onRoutineNameChange }: Routine
               </tr>
             ))}
           </tbody>
+            {!isReadOnly && (
+              <tfoot>
+                <tr className="bg-gradient-to-r from-game-sidebar to-game-card border-t-2 border-game-border shadow-lg">
+                  <td colSpan={DAYS_OF_WEEK.length + 2} className="p-2">
+                    {addingNew ? (
+                      <div className="flex items-center gap-2 w-full">
+                        <Input
+                          value={newRoutineName}
+                          onChange={(e) => setNewRoutineName(e.target.value)}
+                          onKeyDown={handleNewKeyDown}
+                          placeholder="Enter new routine name"
+                          className="h-8 text-sm bg-game-input border-game-border text-game-foreground rounded-lg px-3 shadow-inner focus:ring-2 focus:ring-game-primary/50 transition-all duration-300 flex-1"
+                          autoFocus
+                        />
+                        <Button
+                          onClick={handleSaveNew}
+                          className="h-8 px-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors duration-300"
+                          size="sm"
+                        >
+                          <Check className="w-4 h-4" />
+                        </Button>
+                        <Button
+                          onClick={handleCancelNew}
+                          className="h-8 px-2 bg-red-500 hover:bg-red-600 text-white rounded-lg transition-colors duration-300"
+                          size="sm"
+                        >
+                          <X className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        onClick={handleAddNewClick}
+                        className="flex items-center gap-2 h-8 px-3 bg-game-primary hover:bg-game-primary/80 text-white rounded-lg transition-colors duration-300"
+                        size="sm"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Add New Quest</span>
+                      </Button>
+                    )}
+                  </td>
+                </tr>
+              </tfoot>
+            )}
             <tfoot>
               <tr className="bg-gradient-to-r from-game-sidebar to-game-card font-bold border-t-2 border-game-border shadow-lg">
                 <td className="p-1.5 sm:p-2 text-xs sm:text-sm text-game-foreground">
