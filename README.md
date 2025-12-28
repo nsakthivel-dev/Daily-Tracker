@@ -26,7 +26,6 @@ A game-inspired weekly routine planning website that helps users track their hab
 ```
 ├── client/
 │   ├── public/
-│   │   └── _redirects
 │   └── src/
 │       ├── components/
 │       │   ├── ui/           # Shadcn UI components
@@ -112,6 +111,8 @@ During development, the Vite development server is used for hot reloading, while
 
 ### Render Deployment
 
+The application is deployed on Render and can be accessed at: https://dailytracker-ftus.onrender.com/
+
 The application includes configuration for Render deployment in `render.yaml`. The configuration includes:
 
 - A web service named "routine-planner"
@@ -119,26 +120,6 @@ The application includes configuration for Render deployment in `render.yaml`. T
 - Build command: `npm install; npm run build`
 - Start command: `npm run start`
 - Environment variables for production including NODE_ENV and PORT
-
-See [RENDER_DEPLOYMENT.md](RENDER_DEPLOYMENT.md) for detailed instructions.
-
-This application can be deployed to Netlify with the following considerations:
-
-1. The frontend is a React SPA with client-side routing
-2. API endpoints need to be served from a separate backend
-3. For a complete deployment, you'll need to:
-   - Deploy the frontend to Netlify
-   - Deploy the backend to a Node.js hosting platform (like Render)
-   - Configure the `VITE_API_URL` environment variable in Netlify to point to your backend
-
-For OAuth authentication, set the `GOOGLE_CALLBACK_URL` environment variable to your Netlify site URL with `/auth/google/callback` path (e.g., `https://your-site.netlify.app/auth/google/callback`).
-
-The `client/public/_redirects` file contains the SPA routing configuration:
-```
-/*    /index.html   200
-```
-
-For detailed instructions, see [NETLIFY_DEPLOYMENT.md](NETLIFY_DEPLOYMENT.md).
 
 ## Contributing
 
