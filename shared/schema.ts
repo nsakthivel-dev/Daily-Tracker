@@ -80,8 +80,11 @@ export interface AppState {
 }
 
 export function getWeekLabel(weekStart: string, weekEnd: string): string {
-  const start = new Date(weekStart);
-  const end = new Date(weekEnd);
+  // Parse date strings in a timezone-safe way
+  // Format is YYYY-MM-DD, so we can parse it as YYYY/MM/DD to avoid timezone shifts
+  const start = new Date(weekStart.replace(/-/g, '/'));
+  const end = new Date(weekEnd.replace(/-/g, '/'));
+  
   const startMonth = start.toLocaleDateString('en-US', { month: 'short' });
   const endMonth = end.toLocaleDateString('en-US', { month: 'short' });
   const startDay = start.getDate();
@@ -95,7 +98,11 @@ export function getWeekLabel(weekStart: string, weekEnd: string): string {
 }
 
 export function createEmptyWeek(weekStart: Date): WeekData {
-  const weekEnd = new Date(weekStart);
+  // Ensure the weekStart is at the beginning of the day to avoid timezone issues
+  const start = new Date(weekStart);
+  start.setHours(0, 0, 0, 0);
+  
+  const weekEnd = new Date(start);
   weekEnd.setDate(weekEnd.getDate() + 6);
   
   const routines: Routine[] = DEFAULT_ROUTINES.map(name => ({
@@ -111,10 +118,18 @@ export function createEmptyWeek(weekStart: Date): WeekData {
     return acc;
   }, {} as Record<DayOfWeek, ScreenTimeEntry>);
   
+  // Format date as YYYY-MM-DD string in local timezone
+  const formatDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
   return {
-    id: `week-${weekStart.toISOString().split('T')[0]}`,
-    weekStart: weekStart.toISOString().split('T')[0],
-    weekEnd: weekEnd.toISOString().split('T')[0],
+    id: `week-${formatDate(start)}`,
+    weekStart: formatDate(start),
+    weekEnd: formatDate(weekEnd),
     routines,
     screenTime,
     isCurrentWeek: true,
@@ -122,11 +137,23 @@ export function createEmptyWeek(weekStart: Date): WeekData {
 }
 
 export function getMonday(date: Date): Date {
+  // Create a new date object to avoid modifying the original
   const d = new Date(date);
+  
+  // Get day of week (0 = Sunday, 1 = Monday, etc.)
   const day = d.getDay();
+  
+  // Calculate the date of the Monday of this week
+  // For Sunday (day=0), we want to go back 6 days to get to the Monday
+  // For Monday (day=1), we want to stay at the same date
+  // For Tuesday (day=2), we want to go back 1 day to get to the Monday
+  // etc.
   const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  
+  // Set to the Monday date and clear time to avoid timezone issues
   d.setDate(diff);
-  d.setHours(0, 0, 0, 0);
+  d.setHours(0, 0, 0, 0); // Set time to beginning of day to avoid timezone issues
+  
   return d;
 }
 

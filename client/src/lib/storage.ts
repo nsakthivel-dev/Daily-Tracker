@@ -44,7 +44,8 @@ export async function loadAppState(): Promise<AppState> {
       }
       
       // Fetch user data from server
-      const response = await fetch(`/api/user/data`, { credentials: "include" });
+      const apiUrl = import.meta.env.VITE_API_URL || '';
+          const response = await fetch(`${apiUrl}/api/user/data`, { credentials: "include" });
       if (response.ok) {
         const serverState: AppState = await response.json();
         
@@ -55,7 +56,16 @@ export async function loadAppState(): Promise<AppState> {
         // Update week information
         const today = new Date();
         const currentMonday = getMonday(today);
-        const currentWeekId = `week-${currentMonday.toISOString().split('T')[0]}`;
+        
+        // Format date as YYYY-MM-DD string in local timezone
+        const formatDate = (date: Date): string => {
+          const year = date.getFullYear();
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const day = String(date.getDate()).padStart(2, '0');
+          return `${year}-${month}-${day}`;
+        };
+        
+        const currentWeekId = `week-${formatDate(currentMonday)}`;
         
         const existingCurrentWeek = serverState.weeks.find(w => w.id === currentWeekId);
         
@@ -88,7 +98,16 @@ export async function loadAppState(): Promise<AppState> {
     
     const today = new Date();
     const currentMonday = getMonday(today);
-    const currentWeekId = `week-${currentMonday.toISOString().split('T')[0]}`;
+    
+    // Format date as YYYY-MM-DD string in local timezone
+    const formatDate = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    };
+    
+    const currentWeekId = `week-${formatDate(currentMonday)}`;
     
     const existingCurrentWeek = state.weeks.find(w => w.id === currentWeekId);
     

@@ -5,13 +5,14 @@ import { soundManager } from "@/lib/sound-manager";
 import { useState, useEffect } from "react";
 
 export function Header() {
-  const { theme, toggleTheme, setGameTheme } = useTheme();
+  const { theme, toggleTheme, toggleGameTheme } = useTheme();
   const [user, setUser] = useState<{ id: string; displayName: string; email: string } | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Check if user is authenticated
   useEffect(() => {
-    fetch("/auth/user", { credentials: "include" })
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    fetch(`${apiUrl}/auth/user`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
         if (data.id) {
@@ -25,7 +26,8 @@ export function Header() {
   }, []);
 
   const handleLogout = () => {
-    fetch("/auth/logout", { 
+    const apiUrl = import.meta.env.VITE_API_URL || '';
+    fetch(`${apiUrl}/auth/logout`, { 
       method: "POST", 
       credentials: "include" 
     })
@@ -93,7 +95,10 @@ export function Header() {
               // User is not logged in - show login button
               <Button
                 variant="ghost"
-                onClick={() => window.location.href = "/auth/google"}
+                onClick={() => {
+                  const apiUrl = import.meta.env.VITE_API_URL || '';
+                  window.location.href = `${apiUrl}/auth/google`;
+                }}
                 className="text-game-foreground hover:bg-game-card/50 backdrop-blur-sm border border-game-border/50 rounded-lg transition-all duration-300 hover:scale-105 group flex items-center gap-2"
                 aria-label="Login with Google"
               >
@@ -107,14 +112,14 @@ export function Header() {
               size="sm"
               onClick={() => {
                 soundManager.playSound("click");
-                setGameTheme();
+                toggleGameTheme();
               }}
               className="text-game-foreground hover:bg-game-card/50 backdrop-blur-sm border border-game-border/50 rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-lg group"
-              aria-label="Switch to game mode"
+              aria-label={theme === "game" ? "Turn off game mode" : "Turn on game mode"}
               data-testid="button-game-theme"
             >
-              <Crown className="w-4 h-4 mr-1 text-yellow-400 group-hover:animate-bounce" />
-              <span className="hidden sm:inline font-bold">Game Mode</span>
+              <Crown className={`w-4 h-4 mr-1 ${theme === "game" ? "text-yellow-300" : "text-yellow-400"} group-hover:animate-bounce`} />
+              <span className="hidden sm:inline font-bold">{theme === "game" ? "Game Mode On" : "Game Mode"}</span>
             </Button>
             
             <Button

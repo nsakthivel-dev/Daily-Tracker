@@ -140,7 +140,7 @@ export function ScreenTimeTracker({ week, onScreenTimeChange }: ScreenTimeTracke
                 fill="hsl(var(--game-primary))"
                 radius={[4, 4, 0, 0]}
                 barSize={20}
-                shape={(props) => {
+                shape={(props: any) => {
                   const { x, y, width, height, value } = props;
                   // Color coding based on hours
                   let fillColor = 'hsl(var(--game-success))'; // Green for low usage

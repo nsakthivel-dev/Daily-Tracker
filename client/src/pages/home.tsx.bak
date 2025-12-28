@@ -118,40 +118,50 @@ export default function Home() {
     day: DayOfWeek,
     newState: CellState
   ) => {
-    if (!appState) return;
-    const updatedState = await updateRoutineCell(appState, routineIndex, day, newState);
-    setAppState(updatedState);
-  }, [appState]);
+    setAppState(prev => {
+      if (!prev) return prev;
+      const newStateValue = updateRoutineCell(prev, routineIndex, day, newState);
+      return newStateValue;
+    });
+  }, []);
 
   const handleRoutineNameChange = useCallback(async (
     routineIndex: number,
     newName: string
   ) => {
-    if (!appState) return;
-    const updatedState = await updateRoutineName(appState, routineIndex, newName);
-    setAppState(updatedState);
-  }, [appState]);
+    setAppState(prev => {
+      if (!prev) return prev;
+      const newStateValue = updateRoutineName(prev, routineIndex, newName);
+      return newStateValue;
+    });
+  }, []);
 
   const handleAddRoutine = useCallback(async (routine: Routine) => {
-    if (!appState) return;
-    const updatedState = await addRoutine(appState, routine);
-    setAppState(updatedState);
-  }, [appState]);
+    setAppState(prev => {
+      if (!prev) return prev;
+      const newStateValue = addRoutine(prev, routine);
+      return newStateValue;
+    });
+  }, []);
 
   const handleDeleteRoutine = useCallback(async (routineIndex: number) => {
-    if (!appState) return;
-    const updatedState = await deleteRoutine(appState, routineIndex);
-    setAppState(updatedState);
-  }, [appState]);
+    setAppState(prev => {
+      if (!prev) return prev;
+      const newStateValue = deleteRoutine(prev, routineIndex);
+      return newStateValue;
+    });
+  }, []);
 
   const handleScreenTimeChange = useCallback(async (
     day: DayOfWeek,
     hours: number
   ) => {
-    if (!appState) return;
-    const updatedState = await updateScreenTime(appState, day, hours);
-    setAppState(updatedState);
-  }, [appState]);
+    setAppState(prev => {
+      if (!prev) return prev;
+      const newStateValue = updateScreenTime(prev, day, hours);
+      return newStateValue;
+    });
+  }, []);
 
   const handleSelectWeek = useCallback((weekId: string) => {
     setAppState(prev => {
@@ -268,6 +278,14 @@ export default function Home() {
             transition={{ duration: 0.3, delay: 0.5 }}
           >
             <PerformanceInsights stats={performanceStats} />
+          </motion.div>
+        </main>
+      </div>
+    </div>
+  );
+}
+}
+}
           </motion.div>
         </main>
       </div>

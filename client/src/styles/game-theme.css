@@ -132,7 +132,6 @@
   
   /* Subtle animated gradient overlay */
   position: relative;
-  overflow: hidden;
   
   &::before {
     content: '';

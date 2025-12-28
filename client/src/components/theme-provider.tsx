@@ -5,7 +5,8 @@ type Theme = "light" | "dark" | "game";
 interface ThemeContextType {
   theme: Theme;
   toggleTheme: () => void;
-  setGameTheme: () => void;
+  toggleGameTheme: () => void;
+  setGameTheme: (enabled: boolean) => void;
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
@@ -19,6 +20,9 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     }
     return "light";
   });
+  
+  // Store the previous non-game theme
+  const [previousTheme, setPreviousTheme] = useState<Exclude<Theme, "game">>("light");
 
   useEffect(() => {
     const root = document.documentElement;
@@ -46,12 +50,26 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     });
   };
 
-  const setGameTheme = () => {
-    setTheme("game");
+  const setGameTheme = (enabled: boolean) => {
+    if (enabled) {
+      // Store current theme before switching to game mode
+      setPreviousTheme(prev => {
+        const current = theme === "game" ? prev : theme;
+        return current as Exclude<Theme, "game">;
+      });
+      setTheme("game");
+    } else {
+      // Revert to previous theme when disabling game mode
+      setTheme(prev => prev === "game" ? previousTheme : prev);
+    }
+  };
+
+  const toggleGameTheme = () => {
+    setGameTheme(theme !== "game");
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, setGameTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, toggleGameTheme, setGameTheme }}>
       {children}
     </ThemeContext.Provider>
   );

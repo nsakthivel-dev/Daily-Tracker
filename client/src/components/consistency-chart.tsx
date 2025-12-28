@@ -155,7 +155,7 @@ export function ConsistencyChart({ week, previousWeekConsistency }: ConsistencyC
                 fill="hsl(var(--game-primary))"
                 radius={[4, 4, 0, 0]}
                 barSize={20}
-                shape={(props) => {
+                shape={(props: any) => {
                   const { x, y, width, height, value } = props;
                   const fillColor = 
                     value >= 80 ? 'hsl(var(--game-success))' :
