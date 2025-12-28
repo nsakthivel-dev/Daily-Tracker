@@ -99,16 +99,31 @@ class SoundManager {
     this.sounds.set("levelUp", buffer);
   }
   
+  private lastSoundTime: number = 0;
+  private soundCooldown: number = 50; // 50ms cooldown between sounds
+  
   public playSound(soundName: string) {
     if (!this.audioContext || this.audioContext.state === "suspended") return;
     
+    const now = Date.now();
+    if (now - this.lastSoundTime < this.soundCooldown) {
+      return; // Skip sound if too soon since last sound
+    }
+    
     const buffer = this.sounds.get(soundName);
     if (!buffer) return;
+    
+    this.lastSoundTime = now;
     
     const source = this.audioContext.createBufferSource();
     source.buffer = buffer;
     source.connect(this.audioContext.destination);
     source.start();
+    
+    // Clean up source after playback
+    source.onended = () => {
+      source.disconnect();
+    };
   }
   
   public async resumeAudioContext() {

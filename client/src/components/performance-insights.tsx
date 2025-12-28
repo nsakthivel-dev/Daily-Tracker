@@ -41,7 +41,7 @@ function InsightCard({ icon, title, value, subtitle, valueColor, isAchievement =
           <div className={cn(
             "flex-shrink-0 p-2 rounded-lg relative overflow-hidden",
             isAchievement 
-              ? "bg-gradient-to-br from-game-primary to-game-secondary text-white" 
+              ? "bg-gradient-to-br from-game-primary to-game-secondary text-primary" 
               : "bg-primary/10 text-primary"
           )}>
             {/* Shine effect */}
@@ -299,7 +299,7 @@ export function PerformanceInsights({ stats }: PerformanceInsightsProps) {
                   <div className={cn(
                     "flex-shrink-0 p-3 rounded-xl relative overflow-hidden transition-transform duration-300 group-hover:rotate-6",
                     achievement.earned 
-                      ? "bg-gradient-to-br from-game-secondary to-game-accent text-white shadow-lg" 
+                      ? "bg-gradient-to-br from-game-secondary to-game-accent text-primary shadow-lg"
                       : "bg-game-muted text-game-muted-foreground"
                   )}>
                     {/* Shine effect */}

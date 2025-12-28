@@ -15,7 +15,10 @@
   --game-danger: 0 90% 60%; /* Red - missed tasks */
   
   --game-background: 220 20% 15%; /* Dark blue-gray - night sky */
-  --game-foreground: 0 0% 95%;
+  --game-foreground: 220 25% 90%;
+  --game-text-primary: 220 20% 80%;
+  --game-text-secondary: 220 20% 60%;
+  --game-text-muted: 220 15% 50%;
   
   --game-card: 220 25% 20%; /* Slightly lighter - stone texture */
   --game-card-foreground: 0 0% 95%;
@@ -33,7 +36,7 @@
   --game-popover-border: 220 25% 35%;
   
   --game-muted: 220 20% 35%;
-  --game-muted-foreground: 220 20% 70%;
+  --game-muted-foreground: 220 20% 55%;
   
   --game-ring: 210 80% 60%;
   
@@ -85,7 +88,10 @@
 :root.game-theme.light {
   /* Adjusted for light mode */
   --game-background: 210 30% 95%;
-  --game-foreground: 220 25% 10%;
+  --game-foreground: 220 30% 20%;
+  --game-text-primary: 220 25% 15%;
+  --game-text-secondary: 220 20% 35%;
+  --game-text-muted: 220 15% 45%;
   
   --game-card: 210 30% 90%;
   --game-card-foreground: 220 25% 10%;
@@ -103,7 +109,7 @@
   --game-popover-border: 210 25% 70%;
   
   --game-muted: 210 25% 78%;
-  --game-muted-foreground: 210 25% 32%;
+  --game-muted-foreground: 220 20% 50%;
   
   /* Lighter shadows for light mode */
   --game-shadow-2xs: 0px 2px 0px 0px hsl(210 30% 85%);
@@ -248,6 +254,8 @@
   position: relative;
   transition: width 0.3s ease;
   box-shadow: 0 0 8px hsl(var(--game-xp) / 0.6);
+  transform: translateZ(0);
+  will-change: width;
 }
 
 .xp-bar-fill::after {
@@ -361,6 +369,8 @@
   border-collapse: separate;
   border-spacing: 0;
   width: 100%;
+  transform: translateZ(0);
+  will-change: transform;
 }
 
 .game-table th,
@@ -409,6 +419,7 @@
   );
   border: 2px solid hsl(var(--game-success));
   border-radius: var(--game-radius);
+  will-change: transform;
 }
 
 .cell-not-completed {
@@ -419,17 +430,22 @@
   );
   border: 2px solid hsl(var(--game-danger));
   border-radius: var(--game-radius);
+  will-change: transform;
 }
 
 .cell-empty {
   background: hsl(var(--game-muted) / 0.3);
   border: 2px dashed hsl(var(--game-border));
   border-radius: var(--game-radius);
+  will-change: transform;
 }
 
 /* Utility classes mapped to game theme variables */
 .bg-game-background { background-color: hsl(var(--game-background)); }
 .text-game-foreground { color: hsl(var(--game-foreground)); }
+.text-game-text-primary { color: hsl(var(--game-text-primary)); }
+.text-game-text-secondary { color: hsl(var(--game-text-secondary)); }
+.text-game-text-muted { color: hsl(var(--game-text-muted)); }
 .text-game-muted-foreground { color: hsl(var(--game-muted-foreground)); }
 .text-game-muted-foreground\/70 { color: hsl(var(--game-muted-foreground) / 0.7); }
 .border-game-border { border-color: hsl(var(--game-border)); }
@@ -499,10 +515,12 @@
 .game-table tbody tr:hover {
   background: hsl(var(--game-card) / 0.7);
   transition: background-color 0.2s ease;
+  will-change: background-color;
 }
 
 .game-table tbody tr:hover td {
   color: hsl(var(--game-foreground));
+  will-change: color;
 }
 
 .game-table tfoot td {

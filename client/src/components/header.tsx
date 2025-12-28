@@ -52,14 +52,14 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="flex h-16 items-center justify-between gap-4">
           <div className="flex items-center gap-3 group cursor-pointer">
-            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-white shadow-lg transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-xl relative overflow-hidden">
+            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 text-primary shadow-lg transform transition-all duration-300 group-hover:scale-110 group-hover:rotate-6 group-hover:shadow-xl relative overflow-hidden">
               <div className="absolute inset-0 bg-gradient-to-br from-blue-400/30 to-purple-500/30 animate-pulse"></div>
               <Sword className="w-7 h-7 relative z-10 drop-shadow-lg" />
               <div className="absolute inset-0 bg-white opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-xl"></div>
             </div>
             <div className="flex flex-col transition-all duration-300 group-hover:translate-x-1">
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold tracking-tight text-white drop-shadow-lg">
+                <h1 className="text-2xl font-bold tracking-tight text-primary drop-shadow-lg">
                   QuestLog
                 </h1>
                 <Zap className="w-5 h-5 text-yellow-300 animate-pulse" />

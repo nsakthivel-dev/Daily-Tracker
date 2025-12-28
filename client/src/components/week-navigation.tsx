@@ -158,7 +158,7 @@ export function WeekNavigation({
                       <div className="flex items-center gap-2">
                         <span className="text-sm font-bold">{week.weekLabel}</span>
                         {week.weekId === currentWeekId && (
-                          <div className="flex items-center gap-1 bg-gradient-to-br from-green-500 to-emerald-600 text-white px-1.5 py-0.5 rounded-full text-[0.6rem] font-bold">
+                          <div className="flex items-center gap-1 bg-gradient-to-br from-green-500 to-emerald-600 text-primary px-1.5 py-0.5 rounded-full text-[0.6rem] font-bold">
                             <Zap className="w-2 h-2" />
                             ACTIVE
                           </div>

@@ -70,7 +70,7 @@ export function ConsistencyChart({ week, previousWeekConsistency }: ConsistencyC
         {/* Shine effect */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         <div className="relative z-10">
-          <CardTitle className="text-base font-bold flex items-center justify-between gap-2 flex-wrap text-white">
+          <CardTitle className="text-base font-bold flex items-center justify-between gap-2 flex-wrap text-primary">
             <div className="flex items-center gap-2">
               <div className="p-1.5 rounded-lg bg-black/20">
                 <Target className="w-4 h-4" />
@@ -127,7 +127,7 @@ export function ConsistencyChart({ week, previousWeekConsistency }: ConsistencyC
                     return (
                       <div className="bg-game-popover border border-game-popover-border rounded-lg p-3 shadow-xl backdrop-blur-sm">
                         <div className="flex items-center gap-2 mb-2">
-                          <div className="p-1 rounded-md bg-gradient-to-br from-yellow-400 to-orange-500 text-white">
+                          <div className="p-1 rounded-md bg-gradient-to-br from-yellow-400 to-orange-500 text-primary">
                             <Zap className="w-3 h-3" />
                           </div>
                           <p className="text-sm font-bold text-game-foreground">{data.fullDay}</p>
